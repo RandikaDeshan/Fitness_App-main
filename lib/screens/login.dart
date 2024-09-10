@@ -1,5 +1,4 @@
-import 'package:fitness_app/models/usermodel.dart';
-import 'package:fitness_app/services/userservice.dart';
+import 'package:fitness_app/services/auth/authservice.dart';
 import 'package:fitness_app/wrapper/bottomnavbar.dart';
 
 import 'package:flutter/material.dart';
@@ -12,17 +11,37 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-  bool user = false;
   bool pass = true;
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  List<UserModel> loadedMembers = [];
-  void fetchAllMembers() async {
-    List<UserModel> membersList = await UserService().loadMembers();
-    setState(() {
-      loadedMembers = membersList;
-    });
+
+  Future<void> _signInWithEmailAndPassword() async {
+    try {
+      await AuthService().signInWithEmailAndPassword(
+          email: _emailController.text, password: _passwordController.text);
+
+      // ignore: use_build_context_synchronously
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) {
+        return const BottomNav();
+      }));
+    } catch (e) {
+      print('Error signing in with email and password: $e');
+      showDialog(
+        // ignore: use_build_context_synchronously
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Error'),
+          content: Text('Error signing in with email and password: $e'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+    }
   }
 
   @override
@@ -109,10 +128,7 @@ class _LoginState extends State<Login> {
                   ElevatedButton(
                       onPressed: () async {
                         if (_formKey.currentState!.validate()) {
-                          Navigator.push(context,
-                              MaterialPageRoute(builder: (context) {
-                            return const BottomNav();
-                          }));
+                          await _signInWithEmailAndPassword();
                         }
                       },
                       style: ElevatedButton.styleFrom(

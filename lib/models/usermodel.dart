@@ -1,5 +1,5 @@
 class UserModel {
-  final int userId;
+  final String userId;
   final String name;
   final String password;
   final String role;

@@ -11,53 +11,47 @@ class ExercisesPage extends StatefulWidget {
 }
 
 class _ExercisesPageState extends State<ExercisesPage> {
-  List<ExercisesModel> loadedExercises = [];
-  void fetchAllExercises() async {
-    List<ExercisesModel> exercisesList =
-        await ExerciseService().loadExercises();
-    setState(() {
-      loadedExercises = exercisesList;
-    });
-  }
-
-  @override
-  void initState() {
-    fetchAllExercises();
-    // TODO: implement initState
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Row(
+      body: StreamBuilder(
+          stream: ExerciseService().getExerciseStream(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+            final List<ExercisesModel> exercises = snapshot.data!;
+            return Column(
               children: [
-                IconButton(
-                    onPressed: () {
-                      Navigator.pop(context);
+                Row(
+                  children: [
+                    IconButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        icon: const Icon(Icons.arrow_back)),
+                  ],
+                ),
+                Flexible(
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: exercises.length,
+                    itemBuilder: (context, index) {
+                      final exercise = exercises[index];
+                      return Padding(
+                          padding: const EdgeInsets.all(3.0),
+                          child: ExerciseCard(
+                              name: exercise.name,
+                              description: exercise.description,
+                              imageUrl: exercise.imageUrl));
                     },
-                    icon: const Icon(Icons.arrow_back)),
+                  ),
+                ),
               ],
-            ),
-            ListView.builder(
-              shrinkWrap: true,
-              itemCount: loadedExercises.length,
-              itemBuilder: (context, index) {
-                final exercise = loadedExercises[index];
-                return Padding(
-                    padding: const EdgeInsets.all(3.0),
-                    child: ExerciseCard(
-                        name: exercise.name,
-                        description: exercise.description,
-                        imageUrl: exercise.imageUrl));
-              },
-            ),
-          ],
-        ),
-      ),
+            );
+          }),
     );
   }
 }

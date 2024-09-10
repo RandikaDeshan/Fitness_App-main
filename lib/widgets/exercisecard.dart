@@ -1,5 +1,4 @@
-import 'dart:io';
-
+import 'package:fitness_app/screens/exercisepage.dart';
 import 'package:flutter/material.dart';
 
 class ExerciseCard extends StatefulWidget {
@@ -25,7 +24,7 @@ class _ExerciseCardState extends State<ExerciseCard> {
         height: 200,
         decoration: BoxDecoration(
             image: DecorationImage(
-                image: FileImage(File(widget.imageUrl)),
+                image: NetworkImage(widget.imageUrl, scale: 1.0),
                 fit: BoxFit.cover,
                 opacity: 0.5),
             border: Border.all(color: Colors.green),
@@ -38,25 +37,44 @@ class _ExerciseCardState extends State<ExerciseCard> {
                   offset: Offset(0, 2))
             ]),
         child: Padding(
-          padding: const EdgeInsets.all(12.0),
+          padding: const EdgeInsets.only(left: 7),
           child: Column(
+            // mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
                 widget.name,
                 style: const TextStyle(
-                    fontSize: 35,
+                    fontSize: 33,
                     color: Colors.black,
                     fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(
+                height: 10,
               ),
               Text(
                 widget.description,
                 style: const TextStyle(
                     color: Colors.black,
-                    fontSize: 20,
+                    fontSize: 17,
                     fontWeight: FontWeight.w500),
               ),
+              const SizedBox(
+                height: 10,
+              ),
+              IconButton(
+                  onPressed: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) {
+                      return const ExercisePage();
+                    }));
+                  },
+                  icon: const Icon(
+                    Icons.arrow_circle_right,
+                    color: Colors.blue,
+                    size: 30,
+                  ))
             ],
           ),
         ),

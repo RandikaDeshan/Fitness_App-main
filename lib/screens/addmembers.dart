@@ -1,6 +1,10 @@
+import 'dart:io';
+
 import 'package:fitness_app/models/usermodel.dart';
 import 'package:fitness_app/services/userservice.dart';
+import 'package:fitness_app/services/userstorage.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 class AddMembers extends StatefulWidget {
   const AddMembers({
@@ -22,6 +26,51 @@ class _AddMembersState extends State<AddMembers> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _genderController = TextEditingController();
   final TextEditingController _roleController = TextEditingController();
+  final TextEditingController _imageController = TextEditingController();
+
+  File? _imageFile;
+
+  Future<void> _pickImage(ImageSource source) async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: source);
+    if (pickedFile != null) {
+      setState(() {
+        _imageFile = File(pickedFile.path);
+      });
+    }
+  }
+
+  Future<void> _createUser(BuildContext context) async {
+    try {
+      if (_imageFile != null) {
+        final imageUrl = await UserProfileStorageService().uploadImage(
+            profileImage: _imageFile, userEmail: _emailController.text);
+        _imageController.text = imageUrl;
+      }
+
+      await UserService().saveUser(UserModel(
+          userId: "",
+          name: _nameController.text,
+          password: _passwordController.text,
+          role: "user",
+          email: _emailController.text,
+          age: int.parse(_ageController.text),
+          height: double.parse(_heightController.text),
+          gender: _genderController.text,
+          weight: double.parse(_weightController.text),
+          imageUrl: _imageController.text));
+
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('User created successfully'),
+          ),
+        );
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
 
   @override
   void dispose() {
@@ -56,6 +105,33 @@ class _AddMembersState extends State<AddMembers> {
               padding: const EdgeInsets.all(20.0),
               child: Column(
                 children: [
+                  Stack(
+                    children: [
+                      _imageFile != null
+                          ? CircleAvatar(
+                              radius: 64,
+                              backgroundImage: FileImage(_imageFile!),
+                              backgroundColor: Colors.white,
+                            )
+                          : const CircleAvatar(
+                              radius: 64,
+                              backgroundImage: NetworkImage(
+                                  'https://i.stack.imgur.com/l60Hf.png'),
+                              backgroundColor: Colors.white,
+                            ),
+                      Positioned(
+                        bottom: -10,
+                        left: 80,
+                        child: IconButton(
+                          onPressed: () => _pickImage(ImageSource.gallery),
+                          icon: const Icon(Icons.add_a_photo),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
                   TextFormField(
                       controller: _nameController,
                       validator: (value) {
@@ -178,24 +254,24 @@ class _AddMembersState extends State<AddMembers> {
                   ElevatedButton(
                       onPressed: () async {
                         if (_formKey.currentState!.validate()) {
-                          List<UserModel> loadedMembers =
-                              await UserService().loadMembers();
+                          // List<UserModel> loadedMembers =
+                          //     await UserService().loadMembers();
 
-                          UserModel user = UserModel(
-                              userId: loadedMembers.length + 1,
-                              name: _nameController.text,
-                              password: _passwordController.text,
-                              role: "User",
-                              email: _emailController.text,
-                              age: int.parse(_ageController.text),
-                              height: double.parse(_heightController.text),
-                              gender: _genderController.text,
-                              weight: double.parse(_weightController.text));
+                          // UserModel user = UserModel(
+                          //     userId: loadedMembers.length + 1,
+                          //     name: _nameController.text,
+                          //     password: _passwordController.text,
+                          //     role: "User",
+                          //     email: _emailController.text,
+                          //     age: int.parse(_ageController.text),
+                          //     height: double.parse(_heightController.text),
+                          //     gender: _genderController.text,
+                          //     weight: double.parse(_weightController.text));
 
-                          if (context.mounted) {
-                            await UserService().saveMembers(user, context);
-                          }
-
+                          // if (context.mounted) {
+                          //   await UserService().saveMembers(user, context);
+                          // }
+                          await _createUser(context);
                           if (context.mounted) {
                             Navigator.pop(context);
                           }

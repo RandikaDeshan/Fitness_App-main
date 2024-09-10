@@ -1,8 +1,6 @@
-import 'dart:convert';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fitness_app/models/usermodel.dart';
-import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:fitness_app/services/auth/authservice.dart';
 
 class UserService {
   // static Future<void> storeUserDetails(
@@ -52,48 +50,82 @@ class UserService {
   //   return false;
   // }
 
-  List<UserModel> memberList = [];
-  static const String _userKey = "users";
+  // List<UserModel> memberList = [];
+  // static const String _userKey = "users";
 
-  Future<void> saveMembers(UserModel usermodel, BuildContext context) async {
+  // Future<void> saveMembers(UserModel usermodel, BuildContext context) async {
+  //   try {
+  //     SharedPreferences pref = await SharedPreferences.getInstance();
+  //     List<String>? existingMembers = pref.getStringList(_userKey);
+
+  //     List<UserModel> existingMemberObjects = [];
+
+  //     if (existingMembers != null) {
+  //       existingMemberObjects = existingMembers
+  //           .map((e) => UserModel.fromJson(jsonDecode(e)))
+  //           .toList();
+  //     }
+
+  //     existingMemberObjects.add(usermodel);
+
+  //     List<String> updatedMembers =
+  //         existingMemberObjects.map((e) => jsonEncode(e.toJson())).toList();
+
+  //     await pref.setStringList(_userKey, updatedMembers);
+
+  //     if (context.mounted) {
+  //       ScaffoldMessenger.of(context)
+  //           .showSnackBar(const SnackBar(content: Text("A member added")));
+  //     }
+  //   } catch (error) {
+  //     print(error.toString());
+  //   }
+  // }
+
+  // Future<List<UserModel>> loadMembers() async {
+  //   SharedPreferences pref = await SharedPreferences.getInstance();
+  //   List<String>? existingMembers = pref.getStringList(_userKey);
+
+  //   List<UserModel> loadedMembers = [];
+  //   if (existingMembers != null) {
+  //     loadedMembers = existingMembers
+  //         .map((e) => UserModel.fromJson(jsonDecode(e)))
+  //         .toList();
+  //   }
+  //   return loadedMembers;
+  // }
+
+  final CollectionReference _usersCollection =
+      FirebaseFirestore.instance.collection("users");
+
+  Future<void> saveUser(UserModel user) async {
     try {
-      SharedPreferences pref = await SharedPreferences.getInstance();
-      List<String>? existingMembers = pref.getStringList(_userKey);
+      final userCredential = await AuthService().createUserWithEmailAndPassword(
+          email: user.email, password: user.password);
 
-      List<UserModel> existingMemberObjects = [];
+      final userId = userCredential!.user?.uid;
 
-      if (existingMembers != null) {
-        existingMemberObjects = existingMembers
-            .map((e) => UserModel.fromJson(jsonDecode(e)))
-            .toList();
+      if (userId != null) {
+        final userRef = _usersCollection.doc(userId);
+        final userMap = user.toJson();
+        userMap['userId'] = userId;
+
+        await userRef.set(userMap);
       }
-
-      existingMemberObjects.add(usermodel);
-
-      List<String> updatedMembers =
-          existingMemberObjects.map((e) => jsonEncode(e.toJson())).toList();
-
-      await pref.setStringList(_userKey, updatedMembers);
-
-      if (context.mounted) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(const SnackBar(content: Text("A member added")));
-      }
-    } catch (error) {
-      print(error.toString());
+    } catch (e) {
+      print('Error creating user: $e');
     }
   }
 
-  Future<List<UserModel>> loadMembers() async {
-    SharedPreferences pref = await SharedPreferences.getInstance();
-    List<String>? existingMembers = pref.getStringList(_userKey);
-
-    List<UserModel> loadedMembers = [];
-    if (existingMembers != null) {
-      loadedMembers = existingMembers
-          .map((e) => UserModel.fromJson(jsonDecode(e)))
-          .toList();
+  Future<UserModel?> getUserById(String userId) async {
+    try {
+      final doc = await _usersCollection.doc(userId).get();
+      if (doc.exists) {
+        return UserModel.fromJson(doc.data() as Map<String, dynamic>);
+      }
+    } catch (e) {
+      print(e.toString());
     }
-    return loadedMembers;
+    return null;
   }
 }

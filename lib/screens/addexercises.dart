@@ -1,7 +1,10 @@
 import 'dart:io';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fitness_app/models/exercisesmodel.dart';
+import 'package:fitness_app/services/exerciesstorage.dart';
 import 'package:fitness_app/services/exerciseserice.dart';
+import 'package:fitness_app/services/userservice.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -13,16 +16,53 @@ class AddExercisesPage extends StatefulWidget {
 }
 
 class _AddExercisesPageState extends State<AddExercisesPage> {
-  File? _selectedImage;
+  File? _imageFile;
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
-  Future pickImageFromGallery() async {
-    final imageUrl = await ImagePicker().pickImage(source: ImageSource.gallery);
-    if (imageUrl == null) return;
-    setState(() {
-      _selectedImage = File(imageUrl.path);
-    });
+  final TextEditingController _imageController = TextEditingController();
+
+  Future<void> _pickImage(ImageSource source) async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: source);
+    if (pickedFile != null) {
+      setState(() {
+        _imageFile = File(pickedFile.path);
+      });
+    }
+  }
+
+  void _createExercise() async {
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+
+      if (user != null) {
+        final userDetails = await UserService().getUserById(user.uid);
+        if (userDetails != null) {
+          if (_imageFile != null) {
+            final imageUrl = await ExerciesStorage()
+                .uploadImage(exerciseImage: _imageFile, id: user.uid);
+            _imageController.text = imageUrl;
+          }
+
+          await ExerciseService().saveExercise(ExercisesModel(
+              id: "",
+              name: _nameController.text,
+              imageUrl: _imageController.text,
+              description: _descriptionController.text,
+              userId: user.uid));
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Exercise created successfully'),
+              ),
+            );
+          }
+        }
+      }
+    } catch (e) {
+      print(e.toString());
+    }
   }
 
   @override
@@ -78,9 +118,9 @@ class _AddExercisesPageState extends State<AddExercisesPage> {
                   const SizedBox(
                     height: 20,
                   ),
-                  _selectedImage != null
+                  _imageFile != null
                       ? Image.file(
-                          _selectedImage!,
+                          _imageFile!,
                           width: 300,
                           height: 250,
                         )
@@ -97,9 +137,8 @@ class _AddExercisesPageState extends State<AddExercisesPage> {
                                     color: Colors.blue.shade100,
                                     borderRadius: BorderRadius.circular(5)),
                                 child: IconButton(
-                                    onPressed: () {
-                                      pickImageFromGallery();
-                                    },
+                                    onPressed: () =>
+                                        _pickImage(ImageSource.gallery),
                                     icon: const Icon(
                                       Icons.upload,
                                       color: Colors.black,
@@ -112,20 +151,7 @@ class _AddExercisesPageState extends State<AddExercisesPage> {
                   ElevatedButton(
                       onPressed: () async {
                         if (_formKey.currentState!.validate()) {
-                          List<ExercisesModel> loadedExercises =
-                              await ExerciseService().loadExercises();
-
-                          ExercisesModel exercise = ExercisesModel(
-                              id: loadedExercises.length + 1,
-                              name: _nameController.text,
-                              imageUrl: _selectedImage!.path,
-                              description: _descriptionController.text);
-
-                          if (context.mounted) {
-                            await ExerciseService()
-                                .saveExercises(exercise, context);
-                          }
-
+                          _createExercise();
                           if (context.mounted) {
                             Navigator.pop(context);
                           }

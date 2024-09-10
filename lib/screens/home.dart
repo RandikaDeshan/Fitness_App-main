@@ -1,5 +1,6 @@
 import 'package:fitness_app/screens/exercises.dart';
 import 'package:fitness_app/screens/schedules.dart';
+import 'package:fitness_app/services/auth/authservice.dart';
 import 'package:fitness_app/widgets/exercisescard.dart';
 import 'package:flutter/material.dart';
 
@@ -57,7 +58,9 @@ class _HomeState extends State<Home> {
                     "Fitness Center",
                     style: TextStyle(fontSize: 30),
                   ),
-                  const Icon(Icons.account_circle)
+                  IconButton(
+                      onPressed: AuthService().signOut,
+                      icon: const Icon(Icons.person_outline_rounded))
                 ],
               ),
               const SizedBox(
