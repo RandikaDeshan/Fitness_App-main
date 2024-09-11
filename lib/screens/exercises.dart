@@ -25,6 +25,7 @@ class _ExercisesPageState extends State<ExercisesPage> {
               );
             }
             final List<ExercisesModel> exercises = snapshot.data!;
+
             return Column(
               children: [
                 Row(

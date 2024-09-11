@@ -55,7 +55,7 @@ class _AddSchedulesState extends State<AddSchedules> {
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
-                content: Text('Exercise created successfully'),
+                content: Text('Schedule created successfully'),
               ),
             );
           }
@@ -73,7 +73,7 @@ class _AddSchedulesState extends State<AddSchedules> {
             child: Column(
       children: [
         AppBar(
-          title: const Center(child: Text("Add an new exercise")),
+          title: const Center(child: Text("Add a new schedule")),
         ),
         const SizedBox(
           height: 30,

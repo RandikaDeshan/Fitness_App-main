@@ -1,4 +1,4 @@
-class UserModel {
+class TrainerModel {
   final String userId;
   final String name;
   final String password;
@@ -11,7 +11,7 @@ class UserModel {
   final String imageUrl;
   final DateTime? createdAt;
 
-  UserModel(
+  TrainerModel(
       {required this.userId,
       required this.name,
       required this.password,
@@ -24,8 +24,8 @@ class UserModel {
       required this.weight,
       required this.imageUrl});
 
-  factory UserModel.fromJson(Map<String, dynamic> json) {
-    return UserModel(
+  factory TrainerModel.fromJson(Map<String, dynamic> json) {
+    return TrainerModel(
         userId: json["userId"],
         name: json["name"],
         password: json["password"],
@@ -51,8 +51,7 @@ class UserModel {
       "height": height,
       "gender": gender,
       "weight": weight,
-      "imageUrl": imageUrl ??
-          "https://cdn.imgbin.com/15/10/13/imgbin-computer-icons-user-profile-avatar-profile-LJbrar10nYY8mYWt0CUXZ8CxE.jpg"
+      "imageUrl": imageUrl
     };
   }
 }

@@ -1,6 +1,7 @@
 import 'package:fitness_app/screens/addexercises.dart';
 import 'package:fitness_app/screens/addmembers.dart';
 import 'package:fitness_app/screens/addschedules.dart';
+import 'package:fitness_app/screens/addtrainers.dart';
 import 'package:fitness_app/widgets/adding.dart';
 import 'package:flutter/material.dart';
 
@@ -55,7 +56,7 @@ class _AddPageState extends State<AddPage> {
               Adding(
                 name: 'Add Trainers',
                 imageUrl: 'assets/body4.jpg',
-                page: AddExercisesPage(),
+                page: AddTrainers(),
               ),
             ],
           ),

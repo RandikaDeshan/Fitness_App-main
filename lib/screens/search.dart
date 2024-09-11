@@ -56,13 +56,13 @@ class _SearchPageState extends State<SearchPage> {
               ),
               Row(
                 children: [
-                  // Expanded(
-                  //   flex: 6,
-                  //   child: ExercisesCard(
-                  //       imageUrl: "assets/gym4.png",
-                  //       name: 'Members',
-                  //       widget: MembersPage()),
-                  // ),
+                  Expanded(
+                    flex: 6,
+                    child: ExercisesCard(
+                        imageUrl: "assets/gym4.png",
+                        name: 'Members',
+                        widget: MembersPage()),
+                  ),
                   Expanded(
                     flex: 6,
                     child: ExercisesCard(

@@ -1,21 +1,19 @@
 import 'dart:io';
 
-import 'package:fitness_app/models/usermodel.dart';
-import 'package:fitness_app/services/userservice.dart';
-import 'package:fitness_app/services/userstorage.dart';
+import 'package:fitness_app/models/trainermodel.dart';
+import 'package:fitness_app/services/trainerservice.dart';
+import 'package:fitness_app/services/trainerstorage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
-class AddMembers extends StatefulWidget {
-  const AddMembers({
-    super.key,
-  });
+class AddTrainers extends StatefulWidget {
+  const AddTrainers({super.key});
 
   @override
-  State<AddMembers> createState() => _AddMembersState();
+  State<AddTrainers> createState() => _AddTrainersState();
 }
 
-class _AddMembersState extends State<AddMembers> {
+class _AddTrainersState extends State<AddTrainers> {
   final _formKey = GlobalKey<FormState>();
   String gender = "";
   final TextEditingController _nameController = TextEditingController();
@@ -25,7 +23,6 @@ class _AddMembersState extends State<AddMembers> {
   final TextEditingController _ageController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _genderController = TextEditingController();
-  final TextEditingController _roleController = TextEditingController();
   final TextEditingController _imageController = TextEditingController();
 
   File? _imageFile;
@@ -43,7 +40,7 @@ class _AddMembersState extends State<AddMembers> {
   Future<void> _createUser(BuildContext context) async {
     try {
       if (_imageFile != null) {
-        final imageUrl = await UserProfileStorageService().uploadImage(
+        final imageUrl = await TrainerStorage().uploadImage(
             profileImage: _imageFile, userEmail: _emailController.text);
         _imageController.text = imageUrl;
       } else {
@@ -58,11 +55,11 @@ class _AddMembersState extends State<AddMembers> {
         _genderController.text = gender;
       }
 
-      await UserService().saveUser(UserModel(
+      await TrainerService().saveTrainer(TrainerModel(
           userId: "",
           name: _nameController.text,
           password: _passwordController.text,
-          role: "user",
+          role: "trainer",
           email: _emailController.text,
           age: int.parse(_ageController.text),
           height: double.parse(_heightController.text),
@@ -73,7 +70,7 @@ class _AddMembersState extends State<AddMembers> {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('User created successfully'),
+            content: Text('Trainer created successfully'),
           ),
         );
       }
@@ -83,28 +80,13 @@ class _AddMembersState extends State<AddMembers> {
   }
 
   @override
-  void dispose() {
-    _nameController.dispose();
-    _emailController.dispose();
-    _heightController.dispose();
-    _weightController.dispose();
-    _ageController.dispose();
-    _passwordController.dispose();
-    _roleController.dispose();
-
-    _genderController.dispose();
-    // TODO: implement dispose
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
         body: SingleChildScrollView(
             child: Column(
       children: [
         AppBar(
-          title: const Center(child: Text("Add a new member")),
+          title: const Center(child: Text("Add a new trainer")),
         ),
         const SizedBox(
           height: 30,
