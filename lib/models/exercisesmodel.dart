@@ -4,13 +4,15 @@ class ExercisesModel {
   final String imageUrl;
   final String description;
   final String userId;
+  final String category;
 
   ExercisesModel(
       {required this.id,
       required this.name,
       required this.imageUrl,
       required this.description,
-      required this.userId});
+      required this.userId,
+      required this.category});
 
   factory ExercisesModel.fromJson(Map<String, dynamic> json) {
     return ExercisesModel(
@@ -18,7 +20,8 @@ class ExercisesModel {
         name: json["name"],
         imageUrl: json["imageUrl"],
         description: json["description"],
-        userId: json["userId"]);
+        userId: json["userId"],
+        category: json["category"]);
   }
 
   Map<String, dynamic> toJson() {
@@ -27,7 +30,8 @@ class ExercisesModel {
       "name": name,
       "imageUrl": imageUrl,
       "description": description,
-      "userId": userId
+      "userId": userId,
+      "category": category
     };
   }
 }

@@ -10,6 +10,8 @@ class ExercisesPage extends StatefulWidget {
   State<ExercisesPage> createState() => _ExercisesPageState();
 }
 
+final TextEditingController _searchController = TextEditingController();
+
 class _ExercisesPageState extends State<ExercisesPage> {
   @override
   Widget build(BuildContext context) {
@@ -32,21 +34,49 @@ class _ExercisesPageState extends State<ExercisesPage> {
                           Navigator.pop(context);
                         },
                         icon: const Icon(Icons.arrow_back)),
+                    const SizedBox(
+                      width: 60,
+                    ),
+                    Row(
+                      children: [
+                        SizedBox(
+                          width: 200,
+                          child: TextFormField(
+                            controller: _searchController,
+                            decoration: const InputDecoration(
+                                hintText: "Search",
+                                border: UnderlineInputBorder(
+                                    borderSide: BorderSide.none)),
+                          ),
+                        ),
+                        IconButton(
+                            onPressed: () {}, icon: const Icon(Icons.search))
+                      ],
+                    ),
                   ],
                 ),
+                const SizedBox(
+                  height: 30,
+                ),
                 Flexible(
-                  child: ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: exercises.length,
-                    itemBuilder: (context, index) {
-                      final exercise = exercises[index];
-                      return Padding(
-                          padding: const EdgeInsets.all(3.0),
-                          child: ExerciseCard(
+                  child: Padding(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: exercises.length,
+                      itemBuilder: (context, index) {
+                        final exercise = exercises[index];
+                        return Padding(
+                            padding: const EdgeInsets.all(3.0),
+                            child: ExerciseCard(
                               name: exercise.name,
                               description: exercise.description,
-                              imageUrl: exercise.imageUrl));
-                    },
+                              imageUrl: exercise.imageUrl,
+                              category: exercise.category,
+                            ));
+                      },
+                    ),
                   ),
                 ),
               ],

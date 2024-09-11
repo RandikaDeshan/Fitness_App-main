@@ -1,28 +1,28 @@
 import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:fitness_app/models/exercisesmodel.dart';
-import 'package:fitness_app/services/exerciesstorage.dart';
-import 'package:fitness_app/services/exerciseserice.dart';
+import 'package:fitness_app/models/shedulemodel.dart';
+import 'package:fitness_app/services/scheduleservice.dart';
+import 'package:fitness_app/services/schedulestorage.dart';
 import 'package:fitness_app/services/userservice.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
-class AddExercisesPage extends StatefulWidget {
-  const AddExercisesPage({super.key});
+class AddSchedules extends StatefulWidget {
+  const AddSchedules({super.key});
 
   @override
-  State<AddExercisesPage> createState() => _AddExercisesPageState();
+  State<AddSchedules> createState() => _AddSchedulesState();
 }
 
-class _AddExercisesPageState extends State<AddExercisesPage> {
+class _AddSchedulesState extends State<AddSchedules> {
   File? _imageFile;
-  String _dropmenu = "";
   final _formKey = GlobalKey<FormState>();
+
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _imageController = TextEditingController();
-  final TextEditingController _categoryController = TextEditingController();
+  final TextEditingController _daysController = TextEditingController();
 
   Future<void> _pickImage(ImageSource source) async {
     final picker = ImagePicker();
@@ -34,7 +34,7 @@ class _AddExercisesPageState extends State<AddExercisesPage> {
     }
   }
 
-  void _createExercise() async {
+  void _createSchedule() async {
     try {
       final user = FirebaseAuth.instance.currentUser;
 
@@ -42,21 +42,16 @@ class _AddExercisesPageState extends State<AddExercisesPage> {
         final userDetails = await UserService().getUserById(user.uid);
         if (userDetails != null) {
           if (_imageFile != null) {
-            final imageUrl = await ExerciesStorage()
+            final imageUrl = await ScheduleStorage()
                 .uploadImage(exerciseImage: _imageFile, id: user.uid);
             _imageController.text = imageUrl;
           }
-          if (_dropmenu != null) {
-            _categoryController.text = _dropmenu;
-          }
-
-          await ExerciseService().saveExercise(ExercisesModel(
+          await Scheduleservice().saveSchedules(SheduleModel(
               id: "",
+              days: int.parse(_daysController.text),
               name: _nameController.text,
               imageUrl: _imageController.text,
-              description: _descriptionController.text,
-              userId: user.uid,
-              category: _categoryController.text));
+              description: _descriptionController.text));
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
@@ -91,6 +86,13 @@ class _AddExercisesPageState extends State<AddExercisesPage> {
                 children: [
                   TextFormField(
                       controller: _nameController,
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'Please enter the name';
+                        } else {
+                          return null;
+                        }
+                      },
                       decoration: const InputDecoration(
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.all(Radius.circular(5))),
@@ -102,6 +104,13 @@ class _AddExercisesPageState extends State<AddExercisesPage> {
                   TextFormField(
                       maxLines: 6,
                       controller: _descriptionController,
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'Please enter a description';
+                        } else {
+                          return null;
+                        }
+                      },
                       decoration: const InputDecoration(
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.all(Radius.circular(5))),
@@ -110,33 +119,20 @@ class _AddExercisesPageState extends State<AddExercisesPage> {
                   const SizedBox(
                     height: 20,
                   ),
-                  DropdownButtonFormField(
-                    decoration: InputDecoration(
-                        label: const Text("Category"),
+                  TextFormField(
+                      controller: _daysController,
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'Please enter the no of days';
+                        } else {
+                          return null;
+                        }
+                      },
+                      decoration: const InputDecoration(
                         border: OutlineInputBorder(
-                            borderSide:
-                                BorderSide(color: Colors.grey.shade300))),
-                    items: const [
-                      DropdownMenuItem(
-                        value: "Chest",
-                        child: Text("Chest"),
-                      ),
-                      DropdownMenuItem(value: "Bicep", child: Text("Bicep")),
-                      DropdownMenuItem(value: "Tricep", child: Text("Tricep")),
-                      DropdownMenuItem(value: "Back", child: Text("Back")),
-                      DropdownMenuItem(value: "Legs", child: Text("Legs")),
-                      DropdownMenuItem(
-                          value: "Shoudlers", child: Text("Shoudlers")),
-                      DropdownMenuItem(value: "Abs", child: Text("Abs")),
-                      DropdownMenuItem(
-                          value: "Forarms", child: Text("Forarms")),
-                    ],
-                    onChanged: (value) {
-                      setState(() {
-                        _dropmenu = value!;
-                      });
-                    },
-                  ),
+                            borderRadius: BorderRadius.all(Radius.circular(5))),
+                        hintText: "Days",
+                      )),
                   const SizedBox(
                     height: 20,
                   ),
@@ -173,7 +169,7 @@ class _AddExercisesPageState extends State<AddExercisesPage> {
                   ElevatedButton(
                       onPressed: () async {
                         if (_formKey.currentState!.validate()) {
-                          _createExercise();
+                          _createSchedule();
                           if (context.mounted) {
                             Navigator.pop(context);
                           }

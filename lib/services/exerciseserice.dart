@@ -12,7 +12,8 @@ class ExerciseService {
           name: exerciseDetails.name,
           imageUrl: exerciseDetails.imageUrl,
           description: exerciseDetails.description,
-          userId: exerciseDetails.userId);
+          userId: exerciseDetails.userId,
+          category: exerciseDetails.category);
       final DocumentReference docRef =
           await _collectionReference.add(exercise.toJson());
       await docRef.update({"id": docRef.id});
