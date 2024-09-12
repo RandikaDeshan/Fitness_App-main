@@ -1,31 +1,25 @@
-import 'package:fitness_app/screens/trainerpage.dart';
+import 'package:fitness_app/screens/schedulepage.dart';
 import 'package:flutter/material.dart';
 
-class TrainerCard extends StatefulWidget {
+class ScheduleCard extends StatefulWidget {
   final String name;
   final String id;
+  final String description;
   final String imageUrl;
-  final String gender;
-  final String email;
-  final int age;
-  final double height;
-  final double weight;
-  const TrainerCard(
+  final int days;
+  const ScheduleCard(
       {super.key,
       required this.name,
+      required this.description,
       required this.imageUrl,
-      required this.gender,
-      required this.email,
-      required this.age,
-      required this.height,
-      required this.weight,
+      required this.days,
       required this.id});
 
   @override
-  State<TrainerCard> createState() => _TrainerCardState();
+  State<ScheduleCard> createState() => _ScheduleCardState();
 }
 
-class _TrainerCardState extends State<TrainerCard> {
+class _ScheduleCardState extends State<ScheduleCard> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -38,9 +32,6 @@ class _TrainerCardState extends State<TrainerCard> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            CircleAvatar(
-              backgroundImage: NetworkImage(widget.imageUrl),
-            ),
             Text(
               widget.name,
               style: const TextStyle(
@@ -50,15 +41,12 @@ class _TrainerCardState extends State<TrainerCard> {
             IconButton(
                 onPressed: () {
                   Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    return TrainerPade(
+                    return SchedulePage(
                         name: widget.name,
                         id: widget.id,
+                        description: widget.description,
                         imageUrl: widget.imageUrl,
-                        gender: widget.gender,
-                        email: widget.email,
-                        age: widget.age,
-                        height: widget.height,
-                        weight: widget.weight);
+                        days: widget.days);
                   }));
                 },
                 icon: const Icon(Icons.arrow_circle_right))

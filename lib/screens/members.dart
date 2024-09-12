@@ -72,6 +72,7 @@ class _MembersPageState extends State<MembersPage> {
                           padding: const EdgeInsets.all(3.0),
                           child: MemberCard(
                             name: member.name,
+                            userId: member.userId,
                             imageUrl: member.imageUrl,
                             gender: member.gender,
                             email: member.email,

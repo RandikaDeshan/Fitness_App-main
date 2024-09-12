@@ -1,6 +1,8 @@
+import 'package:fitness_app/models/usermodel.dart';
 import 'package:fitness_app/screens/exercises.dart';
 import 'package:fitness_app/screens/schedules.dart';
 import 'package:fitness_app/services/auth/authservice.dart';
+import 'package:fitness_app/services/userservice.dart';
 import 'package:fitness_app/widgets/exercisescard.dart';
 import 'package:flutter/material.dart';
 

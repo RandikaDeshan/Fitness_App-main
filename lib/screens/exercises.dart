@@ -72,6 +72,7 @@ class _ExercisesPageState extends State<ExercisesPage> {
                             padding: const EdgeInsets.all(3.0),
                             child: ExerciseCard(
                               name: exercise.name,
+                              id: exercise.id,
                               description: exercise.description,
                               imageUrl: exercise.imageUrl,
                               category: exercise.category,

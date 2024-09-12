@@ -18,4 +18,12 @@ class ScheduleStorage {
       return "";
     }
   }
+
+  Future<void> deleteImage({required String imageUrl}) async {
+    try {
+      await _storage.refFromURL(imageUrl).delete();
+    } catch (e) {
+      print(e);
+    }
+  }
 }

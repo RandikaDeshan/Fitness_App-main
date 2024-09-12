@@ -72,6 +72,7 @@ class _TrainersPageState extends State<TrainersPage> {
                           padding: const EdgeInsets.all(3.0),
                           child: TrainerCard(
                               name: trainer.name,
+                              id: trainer.userId,
                               imageUrl: trainer.imageUrl,
                               gender: trainer.gender,
                               email: trainer.email,

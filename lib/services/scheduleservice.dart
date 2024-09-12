@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fitness_app/models/shedulemodel.dart';
+import 'package:fitness_app/services/schedulestorage.dart';
 
 class Scheduleservice {
   final CollectionReference _collectionReference =
@@ -21,11 +22,22 @@ class Scheduleservice {
     }
   }
 
-  Stream<List<SheduleModel>> getScheduleStream() {
+  Stream<List<SheduleModel>> getSchedulesStream() {
     return _collectionReference.snapshots().map((snapshot) {
       return snapshot.docs.map((doc) {
         return SheduleModel.fromJson(doc.data() as Map<String, dynamic>);
       }).toList();
     });
+  }
+
+  Future<void> deletePost(
+      {required String id, required String imageUrl}) async {
+    try {
+      await _collectionReference.doc(id).delete();
+      await ScheduleStorage().deleteImage(imageUrl: imageUrl);
+      print("Post deleted successfully");
+    } catch (error) {
+      print('Error deleting post: $error');
+    }
   }
 }

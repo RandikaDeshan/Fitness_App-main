@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 class ExerciseCard extends StatefulWidget {
   final String name;
+  final String id;
   final String description;
   final String imageUrl;
   final String category;
@@ -11,7 +12,8 @@ class ExerciseCard extends StatefulWidget {
       required this.name,
       required this.description,
       required this.imageUrl,
-      required this.category});
+      required this.category,
+      required this.id});
 
   @override
   State<ExerciseCard> createState() => _ExerciseCardState();
@@ -40,8 +42,9 @@ class _ExerciseCardState extends State<ExerciseCard> {
             IconButton(
                 onPressed: () {
                   Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    return ExercisePage(
+                    return OneExercisePage(
                       name: widget.name,
+                      id: widget.id,
                       description: widget.description,
                       imageUrl: widget.imageUrl,
                       category: widget.category,

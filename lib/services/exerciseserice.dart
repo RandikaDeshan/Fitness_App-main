@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fitness_app/models/exercisesmodel.dart';
+import 'package:fitness_app/services/exerciesstorage.dart';
 
 class ExerciseService {
   final CollectionReference _collectionReference =
@@ -28,5 +29,16 @@ class ExerciseService {
         return ExercisesModel.fromJson(doc.data() as Map<String, dynamic>);
       }).toList();
     });
+  }
+
+  Future<void> deletePost(
+      {required String id, required String imageUrl}) async {
+    try {
+      await _collectionReference.doc(id).delete();
+      await ExerciesStorage().deleteImage(imageUrl: imageUrl);
+      print("Post deleted successfully");
+    } catch (error) {
+      print('Error deleting post: $error');
+    }
   }
 }

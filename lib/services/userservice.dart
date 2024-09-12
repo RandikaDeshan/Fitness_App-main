@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fitness_app/models/usermodel.dart';
 import 'package:fitness_app/services/auth/authservice.dart';
+import 'package:fitness_app/services/userstorage.dart';
 
 class UserService {
   final CollectionReference _usersCollection =
@@ -43,5 +44,28 @@ class UserService {
         return UserModel.fromJson(doc.data() as Map<String, dynamic>);
       }).toList();
     });
+  }
+
+  Future<List<UserModel>> getAllUsers() async {
+    try {
+      final snapshot = await _usersCollection.get();
+      return snapshot.docs
+          .map((doc) => UserModel.fromJson(doc.data() as Map<String, dynamic>))
+          .toList();
+    } catch (error) {
+      print('Error getting users: $error');
+      return [];
+    }
+  }
+
+  Future<void> deletePost(
+      {required String userId, required String imageUrl}) async {
+    try {
+      await _usersCollection.doc(userId).delete();
+      await UserProfileStorageService().deleteImage(imageUrl: imageUrl);
+      print("Post deleted successfully");
+    } catch (error) {
+      print('Error deleting post: $error');
+    }
   }
 }

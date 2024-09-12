@@ -1,7 +1,9 @@
+import 'package:fitness_app/screens/memberpage.dart';
 import 'package:flutter/material.dart';
 
 class MemberCard extends StatefulWidget {
   final String name;
+  final String userId;
   final String imageUrl;
   final String gender;
   final String email;
@@ -17,6 +19,7 @@ class MemberCard extends StatefulWidget {
     required this.age,
     required this.height,
     required this.weight,
+    required this.userId,
   });
 
   @override
@@ -47,9 +50,17 @@ class _MemberCardState extends State<MemberCard> {
             ),
             IconButton(
                 onPressed: () {
-                  // Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  //   return
-                  // }));
+                  Navigator.push(context, MaterialPageRoute(builder: (context) {
+                    return MemberPage(
+                        name: widget.name,
+                        userId: widget.userId,
+                        imageUrl: widget.imageUrl,
+                        gender: widget.gender,
+                        email: widget.email,
+                        age: widget.age,
+                        height: widget.height,
+                        weight: widget.weight);
+                  }));
                 },
                 icon: const Icon(Icons.arrow_circle_right))
           ],

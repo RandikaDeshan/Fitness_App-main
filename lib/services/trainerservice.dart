@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fitness_app/models/trainermodel.dart';
 import 'package:fitness_app/services/auth/authservice.dart';
+import 'package:fitness_app/services/trainerstorage.dart';
 
 class TrainerService {
   final CollectionReference _trainerCollection =
@@ -43,5 +44,16 @@ class TrainerService {
         return TrainerModel.fromJson(doc.data() as Map<String, dynamic>);
       }).toList();
     });
+  }
+
+  Future<void> deletePost(
+      {required String userId, required String imageUrl}) async {
+    try {
+      await _trainerCollection.doc(userId).delete();
+      await TrainerStorage().deleteImage(imageUrl: imageUrl);
+      print("Post deleted successfully");
+    } catch (error) {
+      print('Error deleting post: $error');
+    }
   }
 }

@@ -1,29 +1,29 @@
-import 'package:fitness_app/services/exerciseserice.dart';
+import 'package:fitness_app/services/scheduleservice.dart';
 import 'package:fitness_app/wrapper/bottomnavbar.dart';
 import 'package:flutter/material.dart';
 
-class OneExercisePage extends StatefulWidget {
+class SchedulePage extends StatefulWidget {
   final String name;
   final String id;
   final String description;
   final String imageUrl;
-  final String category;
-  const OneExercisePage(
+  final int days;
+  const SchedulePage(
       {super.key,
       required this.name,
       required this.description,
       required this.imageUrl,
-      required this.category,
+      required this.days,
       required this.id});
 
   @override
-  State<OneExercisePage> createState() => _OneExercisePageState();
+  State<SchedulePage> createState() => _SchedulePageState();
 }
 
 Future<void> _deletePost(
     String postId, String postUrl, BuildContext context) async {
   try {
-    await ExerciseService().deletePost(
+    await Scheduleservice().deletePost(
       id: postId,
       imageUrl: postUrl,
     );
@@ -44,7 +44,7 @@ Future<void> _deletePost(
   }
 }
 
-class _OneExercisePageState extends State<OneExercisePage> {
+class _SchedulePageState extends State<SchedulePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -58,7 +58,13 @@ class _OneExercisePageState extends State<OneExercisePage> {
               const SizedBox(
                 height: 30,
               ),
-              Text("${widget.category} Exercise"),
+              Text(
+                "${widget.days} Days Schedule",
+                style: const TextStyle(fontSize: 17),
+              ),
+              const SizedBox(
+                height: 30,
+              ),
               Center(
                 child: Image(
                   image: NetworkImage(widget.imageUrl),
@@ -111,7 +117,7 @@ class _OneExercisePageState extends State<OneExercisePage> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text("Delete this exercise"),
+                          const Text("Delete this member"),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -122,7 +128,7 @@ class _OneExercisePageState extends State<OneExercisePage> {
                                   child: const Text("Cancel")),
                               TextButton(
                                   onPressed: () async {
-                                    _deletePost(
+                                    await _deletePost(
                                         widget.id, widget.imageUrl, context);
 
                                     Navigator.pushReplacement(context,
