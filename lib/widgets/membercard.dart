@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 class MemberCard extends StatefulWidget {
   final String name;
+  final String password;
   final String userId;
   final String imageUrl;
   final String gender;
@@ -20,6 +21,7 @@ class MemberCard extends StatefulWidget {
     required this.height,
     required this.weight,
     required this.userId,
+    required this.password,
   });
 
   @override
@@ -53,6 +55,7 @@ class _MemberCardState extends State<MemberCard> {
                   Navigator.push(context, MaterialPageRoute(builder: (context) {
                     return MemberPage(
                         name: widget.name,
+                        password: widget.password,
                         userId: widget.userId,
                         imageUrl: widget.imageUrl,
                         gender: widget.gender,

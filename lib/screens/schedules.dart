@@ -10,81 +10,99 @@ class SchedulsPage extends StatefulWidget {
   State<SchedulsPage> createState() => _SchedulsPageState();
 }
 
-final TextEditingController _searchController = TextEditingController();
-
 class _SchedulsPageState extends State<SchedulsPage> {
+  List<SheduleModel> _schedules = [];
+  List<SheduleModel> _filterdSchedules = [];
+
+  Future<void> _fetchAllSchedules() async {
+    try {
+      final List<SheduleModel> shedules = await Scheduleservice().getAllUsers();
+      setState(() {
+        _schedules = shedules;
+        _filterdSchedules = shedules;
+      });
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  void _searchSchedules(String query) {
+    setState(() {
+      _filterdSchedules = _schedules
+          .where(
+            (user) => user.name.toLowerCase().contains(
+                  query.toLowerCase(),
+                ),
+          )
+          .toList();
+    });
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _fetchAllSchedules();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: StreamBuilder(
-        stream: Scheduleservice().getSchedulesStream(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-
-          final List<SheduleModel> schedules = snapshot.data!;
-
-          return Column(
+      body: Column(
+        children: [
+          Row(
             children: [
+              IconButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  icon: const Icon(Icons.arrow_back)),
+              const SizedBox(
+                width: 60,
+              ),
               Row(
                 children: [
-                  IconButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      icon: const Icon(Icons.arrow_back)),
-                  const SizedBox(
-                    width: 60,
+                  SizedBox(
+                    width: 200,
+                    child: TextFormField(
+                      onChanged: _searchSchedules,
+                      decoration: const InputDecoration(
+                          hintText: "Search",
+                          suffixIcon: Icon(Icons.search),
+                          border: UnderlineInputBorder(
+                              borderSide: BorderSide.none)),
+                    ),
                   ),
-                  Row(
-                    children: [
-                      SizedBox(
-                        width: 200,
-                        child: TextFormField(
-                          controller: _searchController,
-                          decoration: const InputDecoration(
-                              hintText: "Search",
-                              border: UnderlineInputBorder(
-                                  borderSide: BorderSide.none)),
-                        ),
-                      ),
-                      IconButton(
-                          onPressed: () {}, icon: const Icon(Icons.search))
-                    ],
-                  ),
+                  IconButton(onPressed: () {}, icon: const Icon(Icons.search))
                 ],
               ),
-              const SizedBox(
-                height: 30,
-              ),
-              Flexible(
-                child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
-                  child: ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: schedules.length,
-                    itemBuilder: (context, index) {
-                      final schedule = schedules[index];
-                      return Padding(
-                          padding: const EdgeInsets.all(3.0),
-                          child: ScheduleCard(
-                            name: schedule.name,
-                            id: schedule.id,
-                            description: schedule.description,
-                            imageUrl: schedule.imageUrl,
-                            days: schedule.days,
-                          ));
-                    },
-                  ),
-                ),
-              ),
             ],
-          );
-        },
+          ),
+          const SizedBox(
+            height: 30,
+          ),
+          Flexible(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+              child: ListView.builder(
+                shrinkWrap: true,
+                itemCount: _filterdSchedules.length,
+                itemBuilder: (context, index) {
+                  final schedule = _filterdSchedules[index];
+                  return Padding(
+                      padding: const EdgeInsets.all(3.0),
+                      child: ScheduleCard(
+                        name: schedule.name,
+                        id: schedule.id,
+                        description: schedule.description,
+                        imageUrl: schedule.imageUrl,
+                        days: schedule.days,
+                      ));
+                },
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

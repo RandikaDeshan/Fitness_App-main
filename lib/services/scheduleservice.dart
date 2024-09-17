@@ -22,12 +22,17 @@ class Scheduleservice {
     }
   }
 
-  Stream<List<SheduleModel>> getSchedulesStream() {
-    return _collectionReference.snapshots().map((snapshot) {
-      return snapshot.docs.map((doc) {
-        return SheduleModel.fromJson(doc.data() as Map<String, dynamic>);
-      }).toList();
-    });
+  Future<List<SheduleModel>> getAllUsers() async {
+    try {
+      final snapshot = await _collectionReference.get();
+      return snapshot.docs
+          .map((doc) =>
+              SheduleModel.fromJson(doc.data() as Map<String, dynamic>))
+          .toList();
+    } catch (error) {
+      print('Error getting users: $error');
+      return [];
+    }
   }
 
   Future<void> deletePost(
@@ -39,5 +44,9 @@ class Scheduleservice {
     } catch (error) {
       print('Error deleting post: $error');
     }
+  }
+
+  Future<void> updateSchedule(SheduleModel schedule) async {
+    await _collectionReference.doc(schedule.id).update(schedule.toJson());
   }
 }

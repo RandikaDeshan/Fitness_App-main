@@ -31,6 +31,19 @@ class ExerciseService {
     });
   }
 
+  Future<List<ExercisesModel>> getAllUsers() async {
+    try {
+      final snapshot = await _collectionReference.get();
+      return snapshot.docs
+          .map((doc) =>
+              ExercisesModel.fromJson(doc.data() as Map<String, dynamic>))
+          .toList();
+    } catch (error) {
+      print('Error getting users: $error');
+      return [];
+    }
+  }
+
   Future<void> deletePost(
       {required String id, required String imageUrl}) async {
     try {
@@ -40,5 +53,9 @@ class ExerciseService {
     } catch (error) {
       print('Error deleting post: $error');
     }
+  }
+
+  Future<void> updateUser(ExercisesModel exercise) async {
+    await _collectionReference.doc(exercise.id).update(exercise.toJson());
   }
 }

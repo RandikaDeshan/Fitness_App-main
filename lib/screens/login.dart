@@ -1,4 +1,5 @@
 import 'package:fitness_app/services/auth/authservice.dart';
+import 'package:fitness_app/wrapper/aorm.dart';
 import 'package:fitness_app/wrapper/bottomnavbar.dart';
 
 import 'package:flutter/material.dart';
@@ -23,7 +24,7 @@ class _LoginState extends State<Login> {
 
       // ignore: use_build_context_synchronously
       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) {
-        return const BottomNav();
+        return const AorMWrapper();
       }));
     } catch (e) {
       print('Error signing in with email and password: $e');

@@ -13,6 +13,7 @@ class UserProfileStorageService {
     try {
       UploadTask task = ref.putFile(
           profileImage, SettableMetadata(contentType: 'image/jpeg'));
+
       TaskSnapshot snapshot = await task;
       String downlodedUrl = await snapshot.ref.getDownloadURL();
       return downlodedUrl;

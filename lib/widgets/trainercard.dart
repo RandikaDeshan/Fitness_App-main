@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 class TrainerCard extends StatefulWidget {
   final String name;
+  final String password;
   final String id;
   final String imageUrl;
   final String gender;
@@ -19,7 +20,8 @@ class TrainerCard extends StatefulWidget {
       required this.age,
       required this.height,
       required this.weight,
-      required this.id});
+      required this.id,
+      required this.password});
 
   @override
   State<TrainerCard> createState() => _TrainerCardState();
@@ -53,6 +55,7 @@ class _TrainerCardState extends State<TrainerCard> {
                     return TrainerPade(
                         name: widget.name,
                         id: widget.id,
+                        password: widget.password,
                         imageUrl: widget.imageUrl,
                         gender: widget.gender,
                         email: widget.email,

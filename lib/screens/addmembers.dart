@@ -42,6 +42,9 @@ class _AddMembersState extends State<AddMembers> {
 
   Future<void> _createUser(BuildContext context) async {
     try {
+      if (gender != null) {
+        _genderController.text = gender;
+      }
       if (_imageFile != null) {
         final imageUrl = await UserProfileStorageService().uploadImage(
             profileImage: _imageFile, userEmail: _emailController.text);
@@ -53,9 +56,6 @@ class _AddMembersState extends State<AddMembers> {
           _imageController.text =
               "https://thumb.ac-illust.com/30/30fa090868a2f8236c55ef8c1361db01_t.jpeg";
         }
-      }
-      if (gender != null) {
-        _genderController.text = gender;
       }
 
       await UserService().saveUser(UserModel(

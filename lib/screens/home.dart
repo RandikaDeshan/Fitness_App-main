@@ -1,21 +1,89 @@
+import 'package:fitness_app/models/gymmodel.dart';
+import 'package:fitness_app/models/trainermodel.dart';
 import 'package:fitness_app/models/usermodel.dart';
 import 'package:fitness_app/screens/exercises.dart';
+import 'package:fitness_app/screens/login.dart';
 import 'package:fitness_app/screens/schedules.dart';
 import 'package:fitness_app/services/auth/authservice.dart';
+import 'package:fitness_app/services/gymservice.dart';
+import 'package:fitness_app/services/trainerservice.dart';
 import 'package:fitness_app/services/userservice.dart';
 import 'package:fitness_app/widgets/exercisescard.dart';
+import 'package:fitness_app/wrapper/wrapper.dart';
 import 'package:flutter/material.dart';
 
 class Home extends StatefulWidget {
-  const Home({super.key});
+  const Home({
+    super.key,
+  });
 
   @override
   State<Home> createState() => _HomeState();
 }
 
 class _HomeState extends State<Home> {
+  List<UserModel> users = [];
+  List<TrainerModel> trainers = [];
   bool _inOut = false;
   bool _openClose = false;
+
+  Future<void> _fetchAllUsers() async {
+    try {
+      final List<UserModel> members = await UserService().getAllUsers();
+      setState(() {
+        users = members;
+      });
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  Future<void> _fetchAllTrainers() async {
+    try {
+      final List<TrainerModel> members = await TrainerService().getAllUsers();
+      setState(() {
+        trainers = members;
+      });
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  Future<void> getOpen() async {
+    final gym = await GymSevice().getOpenById("KFxARBsYd8yZ7SiSvOzx");
+    if (gym!.open) {
+      setState(() {
+        _openClose = true;
+      });
+    } else {
+      setState(() {
+        _openClose = false;
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _fetchAllUsers();
+    _fetchAllTrainers();
+    getOpen();
+  }
+
+  void updateOpen() async {
+    setState(() {
+      _openClose = !_openClose;
+    });
+    if (_openClose) {
+      await GymSevice()
+          .updateUser(GymModel(open: true, id: 'KFxARBsYd8yZ7SiSvOzx'));
+    } else {
+      await GymSevice()
+          .updateUser(GymModel(open: false, id: 'KFxARBsYd8yZ7SiSvOzx'));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -62,7 +130,7 @@ class _HomeState extends State<Home> {
                   ),
                   IconButton(
                       onPressed: AuthService().signOut,
-                      icon: const Icon(Icons.person_outline_rounded))
+                      icon: const Icon(Icons.logout))
                 ],
               ),
               const SizedBox(
@@ -72,14 +140,15 @@ class _HomeState extends State<Home> {
               const SizedBox(
                 height: 20,
               ),
-              const Row(
+              Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    "Members : 100",
-                    style: TextStyle(fontSize: 20),
+                    "Members : ${users.length}",
+                    style: const TextStyle(fontSize: 20),
                   ),
-                  Text("Trainers : 10", style: TextStyle(fontSize: 20))
+                  Text("Trainers : ${trainers.length}",
+                      style: const TextStyle(fontSize: 20))
                 ],
               ),
               const SizedBox(
@@ -107,12 +176,10 @@ class _HomeState extends State<Home> {
                       activeColor: Colors.blue[100],
                       value: _openClose,
                       onChanged: (value) {
-                        setState(() {
-                          _openClose = !_openClose;
-                        });
+                        updateOpen();
                       },
                     ),
-                  ),
+                  )
                 ],
               ),
               const SizedBox(

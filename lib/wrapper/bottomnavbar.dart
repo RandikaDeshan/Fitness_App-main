@@ -1,13 +1,13 @@
-import 'package:fitness_app/models/usermodel.dart';
 import 'package:fitness_app/screens/add.dart';
 import 'package:fitness_app/screens/calendar.dart';
 import 'package:fitness_app/screens/home.dart';
 import 'package:fitness_app/screens/search.dart';
-import 'package:fitness_app/services/userservice.dart';
 import 'package:flutter/material.dart';
 
 class BottomNav extends StatefulWidget {
-  const BottomNav({super.key});
+  const BottomNav({
+    super.key,
+  });
 
   @override
   State<BottomNav> createState() => _BottomNavState();
@@ -17,7 +17,7 @@ class _BottomNavState extends State<BottomNav> {
   int _currentIndex = 0;
 
   final List<Widget> _pages = [
-    const Home(),
+    Home(),
     const SearchPage(),
     const AddPage(),
     const CalendarPage()

@@ -38,12 +38,17 @@ class TrainerService {
     return null;
   }
 
-  Stream<List<TrainerModel>> getTrainersStream() {
-    return _trainerCollection.snapshots().map((snapshot) {
-      return snapshot.docs.map((doc) {
-        return TrainerModel.fromJson(doc.data() as Map<String, dynamic>);
-      }).toList();
-    });
+  Future<List<TrainerModel>> getAllUsers() async {
+    try {
+      final snapshot = await _trainerCollection.get();
+      return snapshot.docs
+          .map((doc) =>
+              TrainerModel.fromJson(doc.data() as Map<String, dynamic>))
+          .toList();
+    } catch (error) {
+      print('Error getting users: $error');
+      return [];
+    }
   }
 
   Future<void> deletePost(
@@ -55,5 +60,9 @@ class TrainerService {
     } catch (error) {
       print('Error deleting post: $error');
     }
+  }
+
+  Future<void> updateTriner(TrainerModel trainer) async {
+    await _trainerCollection.doc(trainer.userId).update(trainer.toJson());
   }
 }

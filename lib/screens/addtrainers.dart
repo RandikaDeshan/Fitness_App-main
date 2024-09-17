@@ -39,6 +39,9 @@ class _AddTrainersState extends State<AddTrainers> {
 
   Future<void> _createUser(BuildContext context) async {
     try {
+      if (gender != null) {
+        _genderController.text = gender;
+      }
       if (_imageFile != null) {
         final imageUrl = await TrainerStorage().uploadImage(
             profileImage: _imageFile, userEmail: _emailController.text);
@@ -50,9 +53,6 @@ class _AddTrainersState extends State<AddTrainers> {
           _imageController.text =
               "https://thumb.ac-illust.com/30/30fa090868a2f8236c55ef8c1361db01_t.jpeg";
         }
-      }
-      if (gender != null) {
-        _genderController.text = gender;
       }
 
       await TrainerService().saveTrainer(TrainerModel(

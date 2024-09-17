@@ -40,6 +40,7 @@ class _AddExercisesPageState extends State<AddExercisesPage> {
 
       if (user != null) {
         final userDetails = await UserService().getUserById(user.uid);
+
         if (userDetails != null) {
           if (_imageFile != null) {
             final imageUrl = await ExerciesStorage()

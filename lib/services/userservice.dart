@@ -18,7 +18,6 @@ class UserService {
         final userRef = _usersCollection.doc(userId);
         final userMap = user.toJson();
         userMap['userId'] = userId;
-
         await userRef.set(userMap);
       }
     } catch (e) {
@@ -36,14 +35,6 @@ class UserService {
       print(e.toString());
     }
     return null;
-  }
-
-  Stream<List<UserModel>> getMemberStream() {
-    return _usersCollection.snapshots().map((snapshot) {
-      return snapshot.docs.map((doc) {
-        return UserModel.fromJson(doc.data() as Map<String, dynamic>);
-      }).toList();
-    });
   }
 
   Future<List<UserModel>> getAllUsers() async {
@@ -67,5 +58,9 @@ class UserService {
     } catch (error) {
       print('Error deleting post: $error');
     }
+  }
+
+  Future<void> updateUser(UserModel user) async {
+    await _usersCollection.doc(user.userId).update(user.toJson());
   }
 }

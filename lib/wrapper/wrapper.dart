@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fitness_app/screens/login.dart';
-import 'package:fitness_app/wrapper/bottomnavbar.dart';
+import 'package:fitness_app/wrapper/aorm.dart';
 import 'package:flutter/material.dart';
 
 class WrapperPage extends StatefulWidget {
@@ -19,7 +19,7 @@ class _WrapperPageState extends State<WrapperPage> {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
         } else if (snapshot.hasData) {
-          return const BottomNav();
+          return const AorMWrapper();
         } else {
           return const Login();
         }
